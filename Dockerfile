@@ -1,14 +1,18 @@
- Backend Dockerfile - Root Level
-# Build from the BE-main directory
-FROM python:3.10-slim
+# Backend Dockerfile - Compatible with Render
+# Builds from repository root, runs from BE-main/
+
+FROM python:3.13-slim
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV FLASK_ENV=production
 
-# Set working directory
+# Set working directory to BE-main contents
 WORKDIR /app
+
+# Copy requirements.txt from BE-main directory
+COPY BE-main/requirements.txt .
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -17,14 +21,11 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements.txt from BE-main
-COPY BE-main/requirements.txt .
-
 # Install Python dependencies
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
-# Copy the entire BE-main application
+# Copy all application files from BE-main
 COPY BE-main/ .
 
 # Expose port
